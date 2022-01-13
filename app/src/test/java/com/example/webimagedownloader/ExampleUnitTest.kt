@@ -1,4 +1,4 @@
-package com.example.globalrelaywebpageimagedownloader
+package com.example.webimagedownloader
 
 import org.junit.Test
 
