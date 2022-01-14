@@ -18,21 +18,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // register listener for connectivity and notify app
-        val network = CheckNetwork(applicationContext)
-        network.registerNetworkCallback()
-
         findViewById<View>(R.id.btnSearch).setOnClickListener {
             val url = findViewById<TextInputEditText>(R.id.editTextUrl).text.toString()
             openWebsiteScannerScreen(url)
-
-            /* TODO checkConnectivityAndExecute {
-                CoroutineScope(Dispatchers.IO).launch {
-                    // Use WorkerManager
-                    val url = findViewById<TextInputEditText>(R.id.editTextUrl).text.toString()
-                    HtmlScraper.scrape(url)
-                }
-            }*/
         }
     }
 
@@ -41,16 +29,5 @@ class MainActivity : AppCompatActivity() {
             putExtra(Constants.URL, url)
         }
         startActivity(intent)
-    }
-
-    private fun checkConnectivityAndExecute(task: () -> Unit) {
-        if (NetworkVariable.isNetworkConnected) {
-            // Internet Connected
-            task()
-            Log.d("Network", "Internet connected")
-        } else {
-            // Not Connected
-            Log.d("Network", "Internet disconnected")
-        }
     }
 }

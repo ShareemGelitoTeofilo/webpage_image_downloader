@@ -23,7 +23,7 @@ class HtmlScraper {
             }*/
 
             val doc: Document =
-                Jsoup.connect("https://unsplash.com/s/photos/desktop-computer")
+                Jsoup.connect(url)
                     .get()
             val media = doc.select("[src]")
             Log.d(tag, "\nMedia: (${media.size})")
