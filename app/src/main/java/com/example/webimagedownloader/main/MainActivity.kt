@@ -1,17 +1,16 @@
 package com.example.webimagedownloader.main
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import com.example.webimagedownloader.R
-import com.example.webimagedownloader.htmlscraper.HtmlScraper
 import com.example.webimagedownloader.network.CheckNetwork
 import com.example.webimagedownloader.network.NetworkVariable
+import com.example.webimagedownloader.utils.Constants
+import com.example.webimagedownloader.webscanning.WebsiteScanningActivity
 import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
@@ -24,14 +23,24 @@ class MainActivity : AppCompatActivity() {
         network.registerNetworkCallback()
 
         findViewById<View>(R.id.btnSearch).setOnClickListener {
-            checkConnectivityAndExecute {
+            val url = findViewById<TextInputEditText>(R.id.editTextUrl).text.toString()
+            openWebsiteScannerScreen(url)
+
+            /* TODO checkConnectivityAndExecute {
                 CoroutineScope(Dispatchers.IO).launch {
                     // Use WorkerManager
                     val url = findViewById<TextInputEditText>(R.id.editTextUrl).text.toString()
                     HtmlScraper.scrape(url)
                 }
-            }
+            }*/
         }
+    }
+
+    private fun openWebsiteScannerScreen(url: String) {
+        val intent = Intent(this, WebsiteScanningActivity::class.java).apply {
+            putExtra(Constants.URL, url)
+        }
+        startActivity(intent)
     }
 
     private fun checkConnectivityAndExecute(task: () -> Unit) {
