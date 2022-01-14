@@ -5,27 +5,38 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Debug
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.example.webimagedownloader.network.CheckNetwork
+import com.example.webimagedownloader.network.NetworkVariable
+
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val network = CheckNetwork(applicationContext)
+        network.registerNetworkCallback()
+
+        // Check network connection
+
+        // Check network connection
+        findViewById<View>(R.id.txt_greeting).setOnClickListener {
+            checkConnectivity()
+        }
     }
 
-    override fun onCreateView(
-        parent: View?,
-        name: String,
-        context: Context,
-        attrs: AttributeSet
-    ): View? {
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-        val isConnected: Boolean = activeNetwork?.isConnectedOrConnecting == true
-
-        Toast.makeText( this,"Is connected: $isConnected", Toast.LENGTH_SHORT).show()
-        return super.onCreateView(parent, name, context, attrs)
+    private fun checkConnectivity() {
+        if (NetworkVariable.isNetworkConnected) {
+            // Internet Connected
+            Log.d("Network", "Internet connected")
+        } else {
+            // Not Connected
+            Log.d("Network", "Internet disconnected")
+        }
     }
 }
