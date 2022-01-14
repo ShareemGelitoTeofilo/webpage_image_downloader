@@ -1,10 +1,8 @@
-package com.example.webimagedownloader.htmlscraper
+package com.example.webimagedownloader.utils.htmlscraper
 
 import android.util.Log
-import androidx.core.text.trimmedLength
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.select.Elements
 
 
 class HtmlScraper {

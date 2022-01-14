@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GlobalRelayWebPageImageDownloader">
         <activity
-            android:name=".webscanning.WebsiteScanningActivity"
+            android:name="com.example.webimagedownloader.webscanning.WebsiteScanningActivity"
             android:exported="true" >
             <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />

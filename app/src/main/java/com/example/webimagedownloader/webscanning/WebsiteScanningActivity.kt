@@ -8,11 +8,10 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
 import com.example.webimagedownloader.R
-import com.example.webimagedownloader.htmlscraper.HtmlScraper
-import com.example.webimagedownloader.network.CheckNetwork
-import com.example.webimagedownloader.network.NetworkVariable
+import com.example.webimagedownloader.utils.htmlscraper.HtmlScraper
+import com.example.webimagedownloader.utils.network.CheckNetwork
+import com.example.webimagedownloader.utils.network.NetworkVariable
 import com.example.webimagedownloader.utils.Constants
-import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -1,11 +1,10 @@
-package com.example.webimagedownloader.network
+package com.example.webimagedownloader.utils.network
 
 import android.content.Context
 import android.net.Network
 
 import android.net.ConnectivityManager
 import android.net.ConnectivityManager.NetworkCallback
-import android.net.NetworkInfo
 
 import android.net.NetworkRequest
 import android.util.Log

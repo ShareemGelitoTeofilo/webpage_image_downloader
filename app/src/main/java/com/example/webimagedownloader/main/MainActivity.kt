@@ -3,11 +3,8 @@ package com.example.webimagedownloader.main
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import com.example.webimagedownloader.R
-import com.example.webimagedownloader.network.CheckNetwork
-import com.example.webimagedownloader.network.NetworkVariable
 import com.example.webimagedownloader.utils.Constants
 import com.example.webimagedownloader.webscanning.WebsiteScanningActivity
 import com.google.android.material.textfield.TextInputEditText
