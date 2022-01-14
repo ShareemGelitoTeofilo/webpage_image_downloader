@@ -8,6 +8,7 @@ import com.example.webimagedownloader.R
 import com.example.webimagedownloader.htmlscraper.HtmlScraper
 import com.example.webimagedownloader.network.CheckNetwork
 import com.example.webimagedownloader.network.NetworkVariable
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,24 +19,25 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // register listener for connectivity and notify app
         val network = CheckNetwork(applicationContext)
         network.registerNetworkCallback()
 
-        // Check network connection
-
-        // Check network connection
-        findViewById<View>(R.id.txt_greeting).setOnClickListener {
-            checkConnectivity()
-            CoroutineScope(Dispatchers.IO).launch {
-
-                HtmlScraper.scrape("")
+        findViewById<View>(R.id.btnSearch).setOnClickListener {
+            checkConnectivityAndExecute {
+                CoroutineScope(Dispatchers.IO).launch {
+                    // Use WorkerManager
+                    val url = findViewById<TextInputEditText>(R.id.editTextUrl).text.toString()
+                    HtmlScraper.scrape(url)
+                }
             }
         }
     }
 
-    private fun checkConnectivity() {
+    private fun checkConnectivityAndExecute(task: () -> Unit) {
         if (NetworkVariable.isNetworkConnected) {
             // Internet Connected
+            task()
             Log.d("Network", "Internet connected")
         } else {
             // Not Connected
