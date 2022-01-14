@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">GlobalRelayWebPageImageDownloader</string>
+    <string name="app_name">Image Downloader</string>
     <string name="internet_connection_error">No internet connection</string>
 </resources>
