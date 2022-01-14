@@ -21,10 +21,13 @@ class WebsiteScanningActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
     private var url: String? = null
+    private lateinit var scanningProgressDialog: ScanningProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_website_scanning)
+
+        scanningProgressDialog = ScanningProgressDialog()
 
         // register listener for connectivity and notify app
         val network = CheckNetwork(applicationContext)
@@ -38,9 +41,11 @@ class WebsiteScanningActivity : AppCompatActivity() {
             displayWebsite(url)
             findViewById<Button>(R.id.btnWebsiteScan).setOnClickListener {
                 checkConnectivityAndExecute {
+                    scanningProgressDialog.show(supportFragmentManager, "scanning_progress_dialog")
                     CoroutineScope(Dispatchers.IO).launch {
                         // TODO Use WorkerManager
                         HtmlScraper.scrape(url)
+                        onScanningCompleted()
                     }
                 }
             }
@@ -79,5 +84,21 @@ class WebsiteScanningActivity : AppCompatActivity() {
             // Not Connected
             Log.d("Network", "Internet disconnected")
         }
+    }
+
+    private fun onScanningCompleted() {
+        // TODO
+        /*
+        * close scanning dialog
+        * open done dialog
+        *
+        * */
+
+        if (scanningProgressDialog.isVisible) {
+            scanningProgressDialog.dismiss()
+        }
+
+        val scanningCompleteDialog = ScanningCompleteDialog()
+        scanningCompleteDialog.show(supportFragmentManager, "scanning_completed_dialog")
     }
 }

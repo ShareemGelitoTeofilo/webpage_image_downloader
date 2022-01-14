@@ -11,6 +11,7 @@ import android.util.Log
 import android.widget.Toast
 import com.example.webimagedownloader.R
 import java.lang.Exception
+import com.example.webimagedownloader.utils.network.*
 
 /*
 You need to call the below method once. It register the callback and fire it when there is a change in network state.
