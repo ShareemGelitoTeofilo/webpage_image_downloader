@@ -1,15 +1,10 @@
-package com.example.webimagedownloader
+package com.example.webimagedownloader.main
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Debug
-import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import android.widget.Toast
+import com.example.webimagedownloader.R
 import com.example.webimagedownloader.htmlscraper.HtmlScraper
 import com.example.webimagedownloader.network.CheckNetwork
 import com.example.webimagedownloader.network.NetworkVariable

@@ -11,6 +11,8 @@ class HtmlScraper {
 
     companion object {
         private val tag: String = HtmlScraper::class.java.simpleName
+
+        // TODO scrape all image file types to download
         fun scrape(url: String) {
             /*val doc: Document = Jsoup.connect("https://en.wikipedia.org/").get()
             Log.d(tag, "Doc title: ${doc.title()}")
