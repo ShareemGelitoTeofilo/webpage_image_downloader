@@ -44,8 +44,8 @@ class WebsiteScanningActivity : AppCompatActivity() {
                     scanningProgressDialog.show(supportFragmentManager, "scanning_progress_dialog")
                     CoroutineScope(Dispatchers.IO).launch {
                         // TODO Use WorkerManager
-                        HtmlScraper.scrape(url)
-                        onScanningCompleted()
+                        val scrapedImgUrls = HtmlScraper.scrape(url, "img")
+                        onScanningCompleted(scrapedImgUrls)
                     }
                 }
             }
@@ -86,19 +86,12 @@ class WebsiteScanningActivity : AppCompatActivity() {
         }
     }
 
-    private fun onScanningCompleted() {
-        // TODO
-        /*
-        * close scanning dialog
-        * open done dialog
-        *
-        * */
-
+    private fun onScanningCompleted(scrapedImgUrls: List<String>) {
         if (scanningProgressDialog.isVisible) {
             scanningProgressDialog.dismiss()
         }
 
-        val scanningCompleteDialog = ScanningCompleteDialog()
+        val scanningCompleteDialog = ScanningCompleteDialog(scrapedImgUrls)
         scanningCompleteDialog.show(supportFragmentManager, "scanning_completed_dialog")
     }
 }
