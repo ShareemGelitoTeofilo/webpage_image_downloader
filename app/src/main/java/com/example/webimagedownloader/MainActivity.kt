@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.example.webimagedownloader.htmlscraper.HtmlScraper
 import com.example.webimagedownloader.network.CheckNetwork
 import com.example.webimagedownloader.network.NetworkVariable
 
@@ -27,6 +28,8 @@ class MainActivity : AppCompatActivity() {
         // Check network connection
         findViewById<View>(R.id.txt_greeting).setOnClickListener {
             checkConnectivity()
+
+            HtmlScraper.scrape("")
         }
     }
 
