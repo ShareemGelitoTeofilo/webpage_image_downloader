@@ -19,9 +19,14 @@ class MainViewModel : ViewModel() {
     val downloadPath: LiveData<String>
         get() = _downloadPath
 
+    private val _searchUrl = MutableLiveData<String>()
+
+    val searchUrl: LiveData<String>
+        get() = _searchUrl
+
 
     fun initDownloadUrl() {
-        val url = SharedPreferenceHelper.getString(Constants.URL, "")
+        val url = SharedPreferenceHelper.getString(Constants.DOWNLOAD_PATH, "")
         url?.let { value ->
             if (value != "") {
                 _downloadPath.value = value
@@ -38,7 +43,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun savePathToPreferences(downloadPath: String) {
-        SharedPreferenceHelper.addString(Constants.URL, downloadPath)
+        SharedPreferenceHelper.addString(Constants.DOWNLOAD_PATH, downloadPath)
     }
 
     private fun getFullPath(uri: Uri, context: Context): String {
@@ -47,5 +52,16 @@ class MainViewModel : ViewModel() {
             DocumentsContract.getTreeDocumentId(uri)
         )
         return UriUtils.getPathFromUri(context, docUriTree)
+    }
+
+    fun setSearchUrlFromPreference() {
+        val url = SharedPreferenceHelper.getString(Constants.SEARCH_URL, "")
+        url?.let {
+            _searchUrl.value = it
+        }
+    }
+
+    fun saveSearchUrlToPreference(url: String) {
+        SharedPreferenceHelper.addString(Constants.SEARCH_URL, url)
     }
 }

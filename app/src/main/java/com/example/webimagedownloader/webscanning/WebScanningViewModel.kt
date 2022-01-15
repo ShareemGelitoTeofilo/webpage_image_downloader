@@ -4,8 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.webimagedownloader.utils.Constants
+import com.example.webimagedownloader.utils.SharedPreferenceHelper
 import com.example.webimagedownloader.utils.htmlscraper.HtmlScraper
-import com.example.webimagedownloader.utils.singleArgViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,5 +45,9 @@ class WebScanningViewModel() : ViewModel() {
                 _scanningStatus.value = STATUS_ENDED
             }
         }
+    }
+
+    fun saveSearchUrlToPreference(searchUrl: String) {
+        SharedPreferenceHelper.addString(Constants.SEARCH_URL, searchUrl)
     }
 }

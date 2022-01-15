@@ -60,7 +60,7 @@ class ScanningCompleteDialog(val scrapedImgUrls: List<String>) : DialogFragment(
             checkConnectivityAndExecute(requireContext()) {
                 CoroutineScope(Dispatchers.IO).launch {
                     if (permissionGranted) {
-                        val downloadPath = SharedPreferenceHelper.getString(Constants.URL, "")!!
+                        val downloadPath = SharedPreferenceHelper.getString(Constants.DOWNLOAD_PATH, "")!!
                         downloadManager.download(scrapedImgUrls, downloadPath, requireActivity())
                         dismiss()
                     } else {
@@ -109,7 +109,7 @@ class ScanningCompleteDialog(val scrapedImgUrls: List<String>) : DialogFragment(
                 ) {
 
                     permissionGranted = true
-                    val downloadPath = SharedPreferenceHelper.getString(Constants.URL, "")!!
+                    val downloadPath = SharedPreferenceHelper.getString(Constants.DOWNLOAD_PATH, "")!!
                     DownloadManagerUtil().download(scrapedImgUrls, downloadPath, requireActivity())
                     // permission was granted, yay! Do the
                     // write to external strage operations here

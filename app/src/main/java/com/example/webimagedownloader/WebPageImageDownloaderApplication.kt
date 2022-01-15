@@ -6,7 +6,6 @@ import com.example.webimagedownloader.utils.Constants
 import com.example.webimagedownloader.utils.SharedPreferenceHelper
 import com.example.webimagedownloader.utils.network.CheckNetwork
 import dagger.hilt.android.HiltAndroidApp
-import java.util.*
 
 @HiltAndroidApp
 class WebPageImageDownloaderApplication : Application() {
@@ -22,7 +21,7 @@ class WebPageImageDownloaderApplication : Application() {
     }
 
     private fun initDefaultDownloadLocation() {
-        if (SharedPreferenceHelper.getString(Constants.URL, "") != "") {
+        if (SharedPreferenceHelper.getString(Constants.DOWNLOAD_PATH, "") != "") {
             val downloadPath =
                 if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                     Environment.getExternalStorageDirectory().toString()
@@ -30,7 +29,7 @@ class WebPageImageDownloaderApplication : Application() {
                     Environment.getExternalStorageDirectory()
                         .toString() + "/" + Environment.DIRECTORY_DCIM
                 }
-            SharedPreferenceHelper.addString(Constants.URL, downloadPath)
+            SharedPreferenceHelper.addString(Constants.DOWNLOAD_PATH, downloadPath)
         }
     }
 }

@@ -1,35 +1,24 @@
 package com.example.webimagedownloader.main
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.database.Cursor
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.webimagedownloader.R
 import com.example.webimagedownloader.utils.Constants
-import com.example.webimagedownloader.utils.SharedPreferenceHelper
 import com.example.webimagedownloader.webscanning.WebsiteScanningActivity
 import com.google.android.material.textfield.TextInputEditText
-import android.provider.MediaStore
-import android.provider.DocumentsContract
 import androidx.lifecycle.ViewModelProvider
-import com.example.webimagedownloader.utils.UriUtils
 import com.example.webimagedownloader.utils.checkConnectivityAndExecute
-import com.example.webimagedownloader.utils.network.NetworkVariable
-import com.example.webimagedownloader.webscanning.WebScanningViewModel
 
 
 class MainActivity : AppCompatActivity() {
 
-    // TODO add validation of URL
-
     private lateinit var editTextDownloadDir: TextInputEditText
     private lateinit var viewModel: MainViewModel
+    private lateinit var editTextSearchUrl: TextInputEditText
 
     private val setDownloadDirectory =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -45,18 +34,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-        viewModel.downloadPath.observe(this) {
-            editTextDownloadDir.setText(it)
-        }
+        setObservers()
 
         viewModel.initDownloadUrl()
 
         editTextDownloadDir = findViewById(R.id.editTextDownloadFolder)
+        editTextSearchUrl = findViewById(R.id.editTextUrl)
 
         findViewById<View>(R.id.btnSearch).setOnClickListener {
             checkConnectivityAndExecute(applicationContext) {
-                val url = findViewById<TextInputEditText>(R.id.editTextUrl).text.toString()
-                openWebsiteScannerScreen(url)
+                val url = editTextSearchUrl.text.toString()
+                viewModel.saveSearchUrlToPreference(url)
+                openWebsiteScannerScreen()
             }
         }
 
@@ -67,10 +56,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun openWebsiteScannerScreen(url: String) {
-        val intent = Intent(this, WebsiteScanningActivity::class.java).apply {
-            putExtra(Constants.URL, url)
+    private fun setObservers() {
+        viewModel.downloadPath.observe(this) {
+            editTextDownloadDir.setText(it)
         }
+        viewModel.searchUrl.observe(this) {
+            editTextSearchUrl.setText(it)
+        }
+    }
+
+    private fun openWebsiteScannerScreen() {
+        val intent = Intent(this, WebsiteScanningActivity::class.java)
         startActivity(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.setSearchUrlFromPreference()
     }
 }

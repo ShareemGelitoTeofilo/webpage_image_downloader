@@ -1,9 +1,7 @@
 package com.example.webimagedownloader.webscanning
 
 import android.annotation.SuppressLint
-import android.media.Image
 import android.os.Bundle
-import android.view.Menu
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
@@ -21,9 +19,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
-import androidx.appcompat.app.ActionBar
 
 import androidx.lifecycle.MutableLiveData
+import com.example.webimagedownloader.utils.SharedPreferenceHelper
 
 
 @AndroidEntryPoint
@@ -37,6 +35,7 @@ open class WebsiteScanningActivity : AppCompatActivity() {
     private val scrapedImages = mutableListOf<String>()
     private lateinit var scanningHandler: ScanningHandler
     private lateinit var editTextSearch: TextInputEditText
+    private lateinit var viewModel: WebScanningViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_website_scanning)
@@ -44,12 +43,8 @@ open class WebsiteScanningActivity : AppCompatActivity() {
         supportActionBar?.setTitle(R.string.web_scanner)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-
         scanningProgressDialog = ScanningProgressDialog()
-        intent?.extras?.let {
-           searchUrl.value = it.getString(Constants.URL)
-            //url = it.getString(Constants.URL)
-        }
+        searchUrl.value = SharedPreferenceHelper.getString(Constants.SEARCH_URL, "")
 
         setScanningHandler(object: ScanningHandler {
             override fun onEnd() {
@@ -57,9 +52,8 @@ open class WebsiteScanningActivity : AppCompatActivity() {
             }
         })
 
-        val viewModel = ViewModelProvider(this)[WebScanningViewModel::class.java]
+        viewModel = ViewModelProvider(this)[WebScanningViewModel::class.java]
         initObservers(viewModel)
-
 
         editTextSearch = findViewById(R.id.editTextUrl)
 
@@ -84,7 +78,9 @@ open class WebsiteScanningActivity : AppCompatActivity() {
 
         editTextSearch.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                val input = editTextSearch.text.toString()
                 displayWebsite(editTextSearch.text.toString())
+                viewModel.saveSearchUrlToPreference(input)
                 true
             } else false
         }
@@ -124,8 +120,9 @@ open class WebsiteScanningActivity : AppCompatActivity() {
         onScanningCompleted(scrapedImages)
     }
 
-    private fun setUrl(url: String) {
+    private fun setSearchUrl(url: String) {
         searchUrl.value = url
+        viewModel.saveSearchUrlToPreference(url)
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -133,15 +130,14 @@ open class WebsiteScanningActivity : AppCompatActivity() {
         webView = findViewById(R.id.webViewToScan)
         webView.webViewClient = object: WebViewClient() {
             override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
-                url?.let { setUrl(it) }
+                url?.let {
+                    setSearchUrl(it)
+                }
                 super.doUpdateVisitedHistory(view, url, isReload)
             }
         }
-        // this will load the url of the website
         webView.loadUrl(url)
-        // this will enable the javascript settings
         webView.settings.javaScriptEnabled = true
-        // if you want to enable zoom feature
         webView.settings.setSupportZoom(true)
     }
 
