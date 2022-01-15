@@ -47,6 +47,8 @@ class MainActivity : AppCompatActivity() {
             editTextDownloadDir.setText(it)
         }
 
+        viewModel.initDownloadUrl()
+
         editTextDownloadDir = findViewById(R.id.editTextDownloadFolder)
 
         findViewById<View>(R.id.btnSearch).setOnClickListener {

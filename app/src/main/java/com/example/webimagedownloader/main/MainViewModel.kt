@@ -19,6 +19,16 @@ class MainViewModel : ViewModel() {
     val downloadPath: LiveData<String>
         get() = _downloadPath
 
+
+    fun initDownloadUrl() {
+        val url = SharedPreferenceHelper.getString(Constants.URL, "")
+        url?.let { value ->
+            if (value != "") {
+                _downloadPath.value = value
+            }
+        }
+    }
+
     fun processDownloadDirectory(uri: Uri, context: Context) {
         viewModelScope.launch {
             val fullFilePath = getFullPath(uri, context)
