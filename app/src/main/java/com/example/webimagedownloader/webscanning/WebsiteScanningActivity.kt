@@ -1,16 +1,13 @@
 package com.example.webimagedownloader.webscanning
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.webimagedownloader.R
-import com.example.webimagedownloader.utils.htmlscraper.HtmlScraper
-import com.example.webimagedownloader.utils.network.CheckNetwork
-import com.example.webimagedownloader.utils.network.NetworkVariable
 import com.example.webimagedownloader.utils.Constants
 import com.example.webimagedownloader.utils.checkConnectivityAndExecute
 import com.example.webimagedownloader.webscanning.dialog.ScanningCompleteDialog
@@ -25,28 +22,49 @@ class WebsiteScanningActivity : AppCompatActivity() {
     private lateinit var webView: WebView
     private var url: String? = null
     private lateinit var scanningProgressDialog: ScanningProgressDialog
+    private val scrapedImages = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_website_scanning)
         scanningProgressDialog = ScanningProgressDialog()
-
         intent?.extras?.let {
             url = it.getString(Constants.URL)
         }
+
+        val viewModel = ViewModelProvider(this)[WebScanningViewModel::class.java]
+        initObservers(viewModel)
 
         url?.let { url ->
             displayWebsite(url)
             findViewById<Button>(R.id.btnWebsiteScan).setOnClickListener {
                 checkConnectivityAndExecute(applicationContext) {
-                    scanningProgressDialog.show(supportFragmentManager, "scanning_progress_dialog")
                     CoroutineScope(Dispatchers.IO).launch {
-                        // TODO Use WorkerManager
-                        val scrapedImgUrls = HtmlScraper.scrape(url, "img")
-                        onScanningCompleted(scrapedImgUrls)
+                        viewModel.onScanBtnClicked(url)
                     }
                 }
             }
+        }
+    }
+
+    private fun initObservers(viewModel: WebScanningViewModel) {
+        viewModel.scanningStatus.observe(this) {
+            when (it) {
+                WebScanningViewModel.STATUS_STARTED -> {
+                    scanningProgressDialog.show(supportFragmentManager, "scanning_progress_dialog")
+                }
+                WebScanningViewModel.STATUS_ENDED -> {
+                    if (scanningProgressDialog.isVisible) {
+                        scanningProgressDialog.dismiss()
+                    }
+                    onScanningCompleted(scrapedImages)
+                }
+            }
+        }
+
+        viewModel.scrapedImages.observe(this) {
+            scrapedImages.clear()
+            scrapedImages.addAll(it)
         }
     }
 
@@ -62,22 +80,14 @@ class WebsiteScanningActivity : AppCompatActivity() {
         webView.settings.setSupportZoom(true)
     }
 
-    // if you press Back button this code will work
     override fun onBackPressed() {
-        // if your webview can go back it will go back
         if (webView.canGoBack())
             webView.goBack()
-        // if your webview cannot go back
-        // it will exit the application
         else
             super.onBackPressed()
     }
 
     private fun onScanningCompleted(scrapedImgUrls: List<String>) {
-        if (scanningProgressDialog.isVisible) {
-            scanningProgressDialog.dismiss()
-        }
-
         val scanningCompleteDialog = ScanningCompleteDialog(scrapedImgUrls)
         scanningCompleteDialog.show(supportFragmentManager, "scanning_completed_dialog")
     }
