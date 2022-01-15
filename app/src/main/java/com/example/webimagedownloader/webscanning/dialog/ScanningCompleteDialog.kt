@@ -69,6 +69,8 @@ class ScanningCompleteDialog(val scrapedImgUrls: List<String>) : DialogFragment(
                 }
             }
         }
+
+        askPermissions()
     }
 
     private fun askPermissions() {
