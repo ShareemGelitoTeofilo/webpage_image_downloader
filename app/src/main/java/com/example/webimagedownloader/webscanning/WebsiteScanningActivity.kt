@@ -12,6 +12,7 @@ import com.example.webimagedownloader.utils.htmlscraper.HtmlScraper
 import com.example.webimagedownloader.utils.network.CheckNetwork
 import com.example.webimagedownloader.utils.network.NetworkVariable
 import com.example.webimagedownloader.utils.Constants
+import com.example.webimagedownloader.utils.checkConnectivityAndExecute
 import com.example.webimagedownloader.webscanning.dialog.ScanningCompleteDialog
 import com.example.webimagedownloader.webscanning.dialog.ScanningProgressDialog
 import kotlinx.coroutines.CoroutineScope
@@ -28,12 +29,7 @@ class WebsiteScanningActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_website_scanning)
-
         scanningProgressDialog = ScanningProgressDialog()
-
-        // register listener for connectivity and notify app
-        val network = CheckNetwork(applicationContext)
-        network.registerNetworkCallback()
 
         intent?.extras?.let {
             url = it.getString(Constants.URL)
@@ -42,7 +38,7 @@ class WebsiteScanningActivity : AppCompatActivity() {
         url?.let { url ->
             displayWebsite(url)
             findViewById<Button>(R.id.btnWebsiteScan).setOnClickListener {
-                checkConnectivityAndExecute {
+                checkConnectivityAndExecute(applicationContext) {
                     scanningProgressDialog.show(supportFragmentManager, "scanning_progress_dialog")
                     CoroutineScope(Dispatchers.IO).launch {
                         // TODO Use WorkerManager
@@ -75,17 +71,6 @@ class WebsiteScanningActivity : AppCompatActivity() {
         // it will exit the application
         else
             super.onBackPressed()
-    }
-
-    private fun checkConnectivityAndExecute(task: () -> Unit) {
-        if (NetworkVariable.isNetworkConnected) {
-            // Internet Connected
-            task()
-            Log.d("Network", "Internet connected")
-        } else {
-            // Not Connected
-            Log.d("Network", "Internet disconnected")
-        }
     }
 
     private fun onScanningCompleted(scrapedImgUrls: List<String>) {

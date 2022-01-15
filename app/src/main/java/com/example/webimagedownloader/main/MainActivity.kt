@@ -18,9 +18,8 @@ import com.google.android.material.textfield.TextInputEditText
 import android.provider.MediaStore
 import android.provider.DocumentsContract
 import com.example.webimagedownloader.utils.UriUtils
-
-
-
+import com.example.webimagedownloader.utils.checkConnectivityAndExecute
+import com.example.webimagedownloader.utils.network.NetworkVariable
 
 
 class MainActivity : AppCompatActivity() {
@@ -47,13 +46,16 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         editTextDownloadDir = findViewById(R.id.editTextDownloadFolder)
         findViewById<View>(R.id.btnSearch).setOnClickListener {
-            val url = findViewById<TextInputEditText>(R.id.editTextUrl).text.toString()
-            openWebsiteScannerScreen(url)
+            checkConnectivityAndExecute(applicationContext) {
+                val url = findViewById<TextInputEditText>(R.id.editTextUrl).text.toString()
+                openWebsiteScannerScreen(url)
+            }
         }
         findViewById<View>(R.id.editTextDownloadFolder).setOnClickListener {
             val i = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)

@@ -16,6 +16,7 @@ import com.example.webimagedownloader.R
 import com.example.webimagedownloader.utils.Constants
 import com.example.webimagedownloader.utils.DownloadManagerUtil
 import com.example.webimagedownloader.utils.SharedPreferenceHelper
+import com.example.webimagedownloader.utils.checkConnectivityAndExecute
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -56,13 +57,15 @@ class ScanningCompleteDialog(val scrapedImgUrls: List<String>) : DialogFragment(
         }
 
         rootView!!.findViewById<Button>(R.id.btnDownload).setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                if (permissionGranted) {
-                    val downloadPath = SharedPreferenceHelper.getString(Constants.URL, "")!!
-                    downloadManager.download(scrapedImgUrls, downloadPath, requireActivity())
-                    dismiss()
-                } else {
-                    askPermissions()
+            checkConnectivityAndExecute(requireContext()) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    if (permissionGranted) {
+                        val downloadPath = SharedPreferenceHelper.getString(Constants.URL, "")!!
+                        downloadManager.download(scrapedImgUrls, downloadPath, requireActivity())
+                        dismiss()
+                    } else {
+                        askPermissions()
+                    }
                 }
             }
         }
