@@ -11,7 +11,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.example.webimagedownloader.R
+import com.example.webimagedownloader.utils.Constants
 import com.example.webimagedownloader.utils.DownloadManagerUtil
+import com.example.webimagedownloader.utils.SharedPreferenceHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,7 +40,8 @@ class ScanningCompleteDialog(val scrapedImgUrls: List<String>) : DialogFragment(
         rootView!!.findViewById<Button>(R.id.btnDownload).setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 if (permissionGranted) {
-                    DownloadManagerUtil.download(scrapedImgUrls, "", requireActivity())
+                    val downloadPath = SharedPreferenceHelper.getString(Constants.URL, "")!!
+                    DownloadManagerUtil.download(scrapedImgUrls, downloadPath, requireActivity())
                     dismiss()
                 } else {
                     askPermissions()
@@ -83,7 +86,8 @@ class ScanningCompleteDialog(val scrapedImgUrls: List<String>) : DialogFragment(
                 ) {
 
                     permissionGranted = true
-                    DownloadManagerUtil.download(scrapedImgUrls, "", requireActivity())
+                    val downloadPath = SharedPreferenceHelper.getString(Constants.URL, "")!!
+                    DownloadManagerUtil.download(scrapedImgUrls, downloadPath, requireActivity())
                     // permission was granted, yay! Do the
                     // write to external strage operations here
                 } else {

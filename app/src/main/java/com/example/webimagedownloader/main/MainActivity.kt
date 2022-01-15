@@ -1,9 +1,10 @@
 package com.example.webimagedownloader.main
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.net.Uri
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -11,25 +12,59 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.webimagedownloader.R
 import com.example.webimagedownloader.utils.Constants
+import com.example.webimagedownloader.utils.SharedPreferenceHelper
 import com.example.webimagedownloader.webscanning.WebsiteScanningActivity
 import com.google.android.material.textfield.TextInputEditText
 import java.io.File
+import android.provider.MediaStore
+import android.provider.DocumentsContract
+import com.example.webimagedownloader.utils.FileHelper
+import com.example.webimagedownloader.utils.UriUtils
+
+
+
 
 
 class MainActivity : AppCompatActivity() {
 
-    private val MY_REQUEST_CODE = 123213
-    val getContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == Activity.RESULT_OK) {
-            // The result data contains a URI for the document or directory that
-            // the user selected.
-            it.data?.data?.also { uri ->
-                // Perform operations on the document using its URI.
-                /*val file = File(Uri(uri.path))
-                Toast.makeText(applicationContext, file.toString(), Toast.LENGTH_SHORT).show()*/
+    private val getDirectory =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                // The result data contains a URI for the document or directory that
+                // the user selected.
+                it.data?.data?.also { uri ->
+                    // TODO move later on the view models
+                    val docUriTree = DocumentsContract.buildDocumentUriUsingTree(
+                        uri,
+                        DocumentsContract.getTreeDocumentId(uri)
+                    )
+
+                    val fullFilePath = UriUtils.getPathFromUri(this, docUriTree)
+                    // val realPath = FileHelper.getUriRealPath(this, uri) ?: ""
+
+                    SharedPreferenceHelper.addString(Constants.URL, fullFilePath)
+
+                    val path = SharedPreferenceHelper.getString(Constants.URL, "")
+                    Toast.makeText(applicationContext, path, Toast.LENGTH_SHORT).show()
+                }
             }
+
         }
 
+    fun getRealPathFromURI(context: Context, contentUri: Uri?): String? {
+        var cursor: Cursor? = null
+        contentUri?.let {
+            return try {
+                val proj = arrayOf(MediaStore.Images.Media.DATA)
+                cursor = context.contentResolver.query(contentUri, proj, null, null, null)
+                val column_index: Int = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                cursor!!.moveToFirst()
+                cursor!!.getString(column_index)
+            } finally {
+                cursor?.close()
+            }
+        }
+        return null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,15 +77,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<View>(R.id.editTextDownloadFolder).setOnClickListener {
-
             val i = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
             i.addCategory(Intent.CATEGORY_DEFAULT)
-            getContent.launch(Intent.createChooser(i, "Choose directory"))
-
-            /*val i = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-            i.addCategory(Intent.CATEGORY_DEFAULT)
-
-            startActivityForResult(Intent.createChooser(i, "Choose directory"), 9999)*/
+            getDirectory.launch(Intent.createChooser(i, "Choose directory"))
         }
     }
 

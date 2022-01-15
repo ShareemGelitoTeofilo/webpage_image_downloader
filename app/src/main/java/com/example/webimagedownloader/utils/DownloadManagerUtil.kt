@@ -18,7 +18,15 @@ class DownloadManagerUtil {
         private val tag = DownloadManagerUtil::class.java.simpleName
 
         fun download(scrapedImgUrls: List<String>, downloadPath: String, context: Context) {
-            val mydir = File(Environment.getExternalStorageDirectory().toString() + Environment.DIRECTORY_PICTURES)
+            // val mydir = File(Environment.getExternalStorageDirectory().toString() + Environment.DIRECTORY_PICTURES)
+            /*val mydir = File(downloadPath)
+            if (!mydir.exists()) {
+                mydir.mkdirs()
+            }*/
+
+            val downloadPath = downloadPath.substringAfterLast("/0")
+
+            val mydir = File(Environment.getExternalStorageDirectory().toString() + downloadPath)
             if (!mydir.exists()) {
                 mydir.mkdirs()
             }
@@ -39,10 +47,9 @@ class DownloadManagerUtil {
                 )
                     .setAllowedOverRoaming(false)
                     .setTitle("Downloading")
-                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, fileName)
+                    .setDestinationInExternalPublicDir (downloadPath, fileName)
 
                 manager.enqueue(request)
-                // TODO return mydir.getAbsolutePath() + File.separator.toString() + date + ".jpg"
             }
         }
 
