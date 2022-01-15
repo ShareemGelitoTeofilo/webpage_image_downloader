@@ -32,16 +32,23 @@ class DownloadManagerUtil {
                 val dateFormat = SimpleDateFormat("mmddyyyyhhmmss")
                 val date: String = dateFormat.format(Date())
 
+                val fileName = "$date.${extractFileExtension(url)}"
+
                 request.setAllowedNetworkTypes(
                     DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE
                 )
                     .setAllowedOverRoaming(false)
                     .setTitle("Downloading")
-                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, "$date.jpg")
+                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, fileName)
 
                 manager.enqueue(request)
                 // TODO return mydir.getAbsolutePath() + File.separator.toString() + date + ".jpg"
             }
         }
+
+        private fun extractFileExtension(fileName: String): String {
+            return fileName.substring(fileName.lastIndexOf('.') + 1)
+        }
     }
+
 }

@@ -12,6 +12,8 @@ import com.example.webimagedownloader.utils.htmlscraper.HtmlScraper
 import com.example.webimagedownloader.utils.network.CheckNetwork
 import com.example.webimagedownloader.utils.network.NetworkVariable
 import com.example.webimagedownloader.utils.Constants
+import com.example.webimagedownloader.webscanning.dialog.ScanningCompleteDialog
+import com.example.webimagedownloader.webscanning.dialog.ScanningProgressDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

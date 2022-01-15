@@ -1,4 +1,4 @@
-package com.example.webimagedownloader.webscanning
+package com.example.webimagedownloader.webscanning.dialog
 
 import android.os.Bundle
 import android.view.LayoutInflater
