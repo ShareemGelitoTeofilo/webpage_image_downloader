@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
@@ -25,6 +27,9 @@ class ScanningCompleteDialog(val scrapedImgUrls: List<String>) : DialogFragment(
     private val MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: Int = 91231
     private var rootView: View? = null
     private var permissionGranted = false
+    private var downloadManager = DownloadManagerUtil()
+    private lateinit var progressBar: ProgressBar
+    private lateinit var txtProgress: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,11 +42,24 @@ class ScanningCompleteDialog(val scrapedImgUrls: List<String>) : DialogFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        progressBar = rootView!!.findViewById(R.id.progressBarDownload)
+        progressBar.max = scrapedImgUrls.size
+
+        txtProgress = rootView!!.findViewById(R.id.txtProgress)
+
+        downloadManager.progress.observe(this) { progress ->
+            if (progress != null) {
+                progressBar.progress = progress
+                txtProgress.text = "$progress/${scrapedImgUrls.size}"
+            }
+        }
+
         rootView!!.findViewById<Button>(R.id.btnDownload).setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 if (permissionGranted) {
                     val downloadPath = SharedPreferenceHelper.getString(Constants.URL, "")!!
-                    DownloadManagerUtil.download(scrapedImgUrls, downloadPath, requireActivity())
+                    downloadManager.download(scrapedImgUrls, downloadPath, requireActivity())
                     dismiss()
                 } else {
                     askPermissions()
@@ -87,7 +105,7 @@ class ScanningCompleteDialog(val scrapedImgUrls: List<String>) : DialogFragment(
 
                     permissionGranted = true
                     val downloadPath = SharedPreferenceHelper.getString(Constants.URL, "")!!
-                    DownloadManagerUtil.download(scrapedImgUrls, downloadPath, requireActivity())
+                    DownloadManagerUtil().download(scrapedImgUrls, downloadPath, requireActivity())
                     // permission was granted, yay! Do the
                     // write to external strage operations here
                 } else {
