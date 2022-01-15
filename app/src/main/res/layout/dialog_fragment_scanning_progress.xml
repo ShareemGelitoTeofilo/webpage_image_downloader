@@ -12,14 +12,15 @@
     android:minWidth="320dp"
     android:minHeight="250dp"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:id="@+id/ccScanningProgress">
 
 
     <TextView
         android:id="@+id/txtDoneScan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Scanning"
+        android:text="@string/scanning"
         android:textColor="@color/color_232323"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"

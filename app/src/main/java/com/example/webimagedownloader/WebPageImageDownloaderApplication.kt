@@ -5,8 +5,10 @@ import android.os.Environment
 import com.example.webimagedownloader.utils.Constants
 import com.example.webimagedownloader.utils.SharedPreferenceHelper
 import com.example.webimagedownloader.utils.network.CheckNetwork
+import dagger.hilt.android.HiltAndroidApp
 import java.util.*
 
+@HiltAndroidApp
 class WebPageImageDownloaderApplication : Application() {
 
     override fun onCreate() {

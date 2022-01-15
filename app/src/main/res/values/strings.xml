@@ -3,4 +3,6 @@
     <string name="internet_connection_error">No internet connection</string>
     <string name="shared_preference_key">Shared Preferences Global Relay</string>
     <string name="app_description">Enter URL of website to scan images from and select the location to save the images.</string>
+    <string name="scanning">Scanning</string>
+    <string name="done_scanning">Done scanning</string>
 </resources>

@@ -32,6 +32,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
             android:layout_marginTop="32dp"
             android:hint="Webpage URL"
             android:text="https://www.merriam-webster.com/dictionary/image"

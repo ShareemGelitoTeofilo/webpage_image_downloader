@@ -26,6 +26,8 @@ import com.example.webimagedownloader.webscanning.WebScanningViewModel
 
 class MainActivity : AppCompatActivity() {
 
+    // TODO add validation of URL
+
     private lateinit var editTextDownloadDir: TextInputEditText
     private lateinit var viewModel: MainViewModel
 
