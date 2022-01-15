@@ -1,11 +1,11 @@
 package com.example.webimagedownloader.webscanning
 
 import android.annotation.SuppressLint
+import android.media.Image
 import android.os.Bundle
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.webimagedownloader.R
@@ -18,11 +18,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import android.view.inputmethod.EditorInfo
+import android.widget.ImageView
 
-import android.widget.TextView
-import android.widget.TextView.OnEditorActionListener
+import androidx.lifecycle.MutableLiveData
 
 
 @AndroidEntryPoint
@@ -31,17 +30,17 @@ open class WebsiteScanningActivity : AppCompatActivity() {
     // TODO add validation of URL
 
     private lateinit var webView: WebView
-    private var url: String? = "https://google.com"
+    private var searchUrl = MutableLiveData("https://google.com")
     private lateinit var scanningProgressDialog: ScanningProgressDialog
     private val scrapedImages = mutableListOf<String>()
     private lateinit var scanningHandler: ScanningHandler
-
+    private lateinit var editTextSearch: TextInputEditText
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_website_scanning)
         scanningProgressDialog = ScanningProgressDialog()
         intent?.extras?.let {
-           url = it.getString(Constants.URL)
+           searchUrl.value = it.getString(Constants.URL)
             //url = it.getString(Constants.URL)
         }
 
@@ -55,18 +54,25 @@ open class WebsiteScanningActivity : AppCompatActivity() {
         initObservers(viewModel)
 
 
-        val editTextSearch = findViewById<TextInputEditText>(R.id.editTextUrl)
+        editTextSearch = findViewById(R.id.editTextUrl)
 
-        url?.let { url ->
+        searchUrl.value?.let { url ->
             displayWebsite(url)
-            findViewById<Button>(R.id.btnWebsiteScan).setOnClickListener {
-                checkConnectivityAndExecute(applicationContext) {
-                    CoroutineScope(Dispatchers.IO).launch {
+            editTextSearch.setText(url)
+        }
+
+        findViewById<Button>(R.id.btnWebsiteScan).setOnClickListener {
+            checkConnectivityAndExecute(applicationContext) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    searchUrl.value?.let { url ->
                         viewModel.onScanBtnClicked(url)
                     }
                 }
             }
-            editTextSearch.setText(url)
+        }
+
+        findViewById<ImageView>(R.id.imgClearSearch).setOnClickListener {
+            editTextSearch.setText("")
         }
 
         editTextSearch.setOnEditorActionListener { v, actionId, event ->
@@ -98,6 +104,10 @@ open class WebsiteScanningActivity : AppCompatActivity() {
             scrapedImages.clear()
             scrapedImages.addAll(it)
         }
+
+        searchUrl.observe(this) {
+            editTextSearch.setText(it)
+        }
     }
 
     private fun onStatusEndScanning() {
@@ -107,10 +117,19 @@ open class WebsiteScanningActivity : AppCompatActivity() {
         onScanningCompleted(scrapedImages)
     }
 
+    private fun setUrl(url: String) {
+        searchUrl.value = url
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     private fun displayWebsite(url: String) {
         webView = findViewById(R.id.webViewToScan)
-        webView.webViewClient = WebViewClient()
+        webView.webViewClient = object: WebViewClient() {
+            override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
+                url?.let { setUrl(it) }
+                super.doUpdateVisitedHistory(view, url, isReload)
+            }
+        }
         // this will load the url of the website
         webView.loadUrl(url)
         // this will enable the javascript settings
