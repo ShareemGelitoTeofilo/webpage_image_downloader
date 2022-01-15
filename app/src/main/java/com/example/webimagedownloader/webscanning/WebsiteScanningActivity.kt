@@ -3,6 +3,7 @@ package com.example.webimagedownloader.webscanning
 import android.annotation.SuppressLint
 import android.media.Image
 import android.os.Bundle
+import android.view.Menu
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
@@ -20,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
+import androidx.appcompat.app.ActionBar
 
 import androidx.lifecycle.MutableLiveData
 
@@ -38,6 +40,11 @@ open class WebsiteScanningActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_website_scanning)
+
+        supportActionBar?.setTitle(R.string.web_scanner)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+
         scanningProgressDialog = ScanningProgressDialog()
         intent?.extras?.let {
            searchUrl.value = it.getString(Constants.URL)

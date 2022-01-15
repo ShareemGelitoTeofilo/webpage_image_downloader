@@ -17,7 +17,8 @@
         android:theme="@style/Theme.GlobalRelayWebPageImageDownloader">
         <activity
             android:name="com.example.webimagedownloader.webscanning.WebsiteScanningActivity"
-            android:exported="true" >
+            android:exported="true"
+            android:parentActivityName=".main.MainActivity">
             <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

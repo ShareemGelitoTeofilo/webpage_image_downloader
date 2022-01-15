@@ -4,5 +4,7 @@
     <string name="shared_preference_key">Shared Preferences Global Relay</string>
     <string name="app_description">Enter URL of website to scan images from and select the location to save the images.</string>
     <string name="scanning">Scanning</string>
+    <string name="web_scanner">Web Scanner</string>
     <string name="done_scanning">Done scanning</string>
+    <string name="menu_folder">Download Folder</string>
 </resources>
